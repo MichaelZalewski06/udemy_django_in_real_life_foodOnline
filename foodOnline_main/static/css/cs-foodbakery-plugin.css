@@ -244,11 +244,11 @@
 .company-logo .element-title h3 { color: #333; margin: 0 0 3px 0; letter-spacing: 0; text-transform: none; }
 .company-logo .element-title p { color: #bbb; letter-spacing: 0.5px; word-spacing: 1px; }
 .company-logo ul { margin: 0 -10px; padding: 0; text-align: left; }
-.company-logo ul li { list-style: none; display: inline-block; margin: 0 -4px 0 0; vertical-align: top; width: 12.5%; padding: 0 10px; position: relative; }
+.company-logo ul li { list-style: none; display: inline-block; margin: 0 -4px 0 0; vertical-align: top; width: 12.5%; padding: 0 5px; position: relative; }
 .company-logo ul li:after { clear: both; content: ''; display: block; }
 .company-logo ul li:last-child figure { margin: 0; }
 .company-logo ul li.has-border figure { border: 1px solid #e5e4e3; text-align: center; }
-.company-logo ul li figure { -webkit-box-shadow: none; box-shadow: none; outline: none; border: 0; margin: 0 0 15px 0; }
+.company-logo ul li figure { -webkit-box-shadow: none; box-shadow: none; outline: none; border: 0; margin: 0 0 10px 0; }
 .company-logo ul li figure a { text-decoration: none; -webkit-box-shadow: none; box-shadow: none; outline: none; border: 0; display: block; }
 .company-logo ul li figure a img { display: block; max-width: 100%; }
 .company-logo ul li figure a img.img-list { display: none; }
