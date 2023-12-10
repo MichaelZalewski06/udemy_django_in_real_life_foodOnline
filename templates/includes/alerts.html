@@ -1,6 +1,6 @@
 {% if messages %}
   {% for m in messages %}
-  <div class="alert alert-success alert-dismissable fade show" role="alert">
+  <div class="alert alert-{{ m.tags }} alert-dismissable fade show show-notification" role="alert">
     <button type="button" class="close" data-direction="alert" data-dismiss="alert" area-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
