@@ -10,6 +10,7 @@ from django.contrib.auth.tokens import default_token_generator
 from .forms import UserForm
 from .models import User, UserProfile
 from .utils import detect_user, send_verification_email
+from vendor.models import Vendor
 
 from vendor.forms import VendorForm
 
@@ -159,7 +160,11 @@ def cust_dashboard( request ):
 @login_required( login_url='login' )
 @user_passes_test( check_role_vendor )
 def vend_dashboard( request ):
-  return render( request, 'accounts/vendDashboard.html' )
+  vendor = Vendor.objects.get( user=request.user )
+  context = {
+    'vendor': vendor,
+  }
+  return render( request, 'accounts/vendDashboard.html', context )
 
 def forgot_password( request ):
   if request.method == 'POST':

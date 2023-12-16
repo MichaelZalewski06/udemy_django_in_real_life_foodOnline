@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 from accounts.models import User, UserProfile
+from accounts.utils import send_notification
 
 # Create your models here.
 
@@ -17,3 +18,21 @@ class Vendor( models.Model ):
 
   def __str__( self ):
     return self.vendor_name
+
+  def save( self, *args, **kwargs ):
+    if self.pk is not None:
+      orig = Vendor.objects.get( pk=self.pk )
+      if orig.is_approved != self.is_approved:
+        mail_subject = 'Congratulations! Your restaurant has been approved!'
+        mail_template = 'accounts/emails/admin_approval_email.html'
+        if self.is_approved != True:
+          mail_subject = 'Sorry, you are not eligible for publishing your menu in our marketplace.'
+          mail_template = 'accounts/emails/admin_approval_email.html'
+
+        context = {
+          'user': self.user,
+          'is_approved': self.is_approved
+        }
+        send_notification( mail_subject, mail_template, context )
+    
+    return super( Vendor, self ).save( *args, **kwargs )
