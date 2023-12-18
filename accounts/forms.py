@@ -42,6 +42,5 @@ class UserProfileForm( forms.ModelForm ):
 
   def __init__( self, *args, **kwargs ):
     super( UserProfileForm, self ).__init__( *args, **kwargs )
-    print( f'UserProfileForm.init fields={self.fields}')
     for fn in ['latitude', 'longitude']:
       self.fields[ fn ].widget.attrs[ 'readonly' ] = 'readonly'
