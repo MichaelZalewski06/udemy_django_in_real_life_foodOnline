@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% include 'includes/alerts.html' %}
+<div class="main-section">
+  {%include 'includes/cover.html' %}
+  <div class="page-section account-header buyer-logged-in">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+          <!-- Load sidebar -->
+          {% include 'includes/v_sidebar.html' with active='menu_builder' %}
+        </div>
+        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+          <div class="user-dashboard loader-holder">
+            <div class="user-holder">
+              <h5>Category: <span class="text-uppercase text-success">{{ category }}</span></h5>
+              <hr>
+              <button class="btn btn-secondary mb-3" onclick="history.back()"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;Back</button>
+              <h6>Menu Categories</h6>
+
+{% if fooditems %}
+  <table class="table table-hover table-borderless">
+      
+    <tbody>
+    {% for food in fooditems %}
+      <tr>
+        <td class="text-left">{{ forloop.counter }}</td>
+        <td class="text-left"><img src="{{ food.image.url }}" width="60" alt="Food Image"></td>
+        <td class="text-left">
+          <a href="#"><p class="mb-0 font-weight-bold">{{ food }}</p>
+          <small class="text-muted">{{ food.description }}</small></a>
+        </td>
+        <td><a href="{% url 'edit_category' food.id %}" style="color:unset;"><i class="fa fa-pencil" aria-hidden="true"></i></a> &nbsp; <a href="{% url 'delete_category' food.id %}" onclick="return confirm('Are you sure you want to delete this category?')"><i class="fa fa-trash text-danger" aria-hidden="true"></i></a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+    <h5 class="text-center">No Food Items found.</h5>
+    <div class="text-center"><a href="{% url 'add_food' %}" class="btn btn-success"><i class="fa fa-plus" aria-hidden="true"></i> Add Item</a></div>
+{% endif %}
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Main Section End -->
+{% endblock %}

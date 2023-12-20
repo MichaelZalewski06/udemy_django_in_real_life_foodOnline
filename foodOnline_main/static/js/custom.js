@@ -1,14 +1,17 @@
 let autocomplete;
 
 function initAutoComplete() {
-  autocomplete = new google.maps.places.Autocomplete(
-    document.getElementById('id_address'), {
-      types: ['geocode', 'establishment'],
-      //default in this app is "IN" - add your country code
-      componentRestrictions: {'country': ['us']},
-  })
-  // function to specify what should happen when the prediction is clicked
-  autocomplete.addListener( 'place_changed', onPlaceChanged );
+  var elAddress = document.getElementById( 'id_address' )
+  if( elAddress ) {
+    autocomplete = new google.maps.places.Autocomplete(
+      elAddress, {
+        types: ['geocode', 'establishment'],
+        //default in this app is "IN" - add your country code
+        componentRestrictions: {'country': ['us']},
+    })
+    // function to specify what should happen when the prediction is clicked
+    autocomplete.addListener( 'place_changed', onPlaceChanged );
+  }
 }
 
 function onPlaceChanged () {
