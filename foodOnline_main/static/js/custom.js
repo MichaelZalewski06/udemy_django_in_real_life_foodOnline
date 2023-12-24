@@ -71,3 +71,59 @@ function onPlaceChanged () {
   }
 
 }
+
+$( document ).ready( function () {
+  $( '.add-to-cart' ).on( 'click', function( e ) {
+    e.preventDefault();
+    food_id = $( this ).attr( 'data-id' )
+    url = $( this ).attr( 'data-url' )
+    $.ajax({
+      type: 'GET',
+      url: url,
+      success: function( response ) {
+        console.log( response )
+        if( response.status == 'login' ) {
+          swal( response.message, '', 'info').then( function() {
+            window.location = '/login'
+          })
+        } else if( response.status == 'success' ) {
+          $( '#cart_counter' ).html( response.cart_counter[ 'cart_count' ])
+          $( '#qty-' + food_id ).html( response.qty )
+        } else {
+          swal( response.message, '', 'error')
+        }
+      }
+    })
+//    alert( 'add_to_cart clicked data-id=' + food_id );
+  })
+
+  $( '.decrease-cart' ).on( 'click', function( e ) {
+    e.preventDefault();
+    food_id = $( this ).attr( 'data-id' )
+    url = $( this ).attr( 'data-url' )
+    $.ajax({
+      type: 'GET',
+      url: url,
+      success: function( response ) {
+        console.log( response )
+        if( response.status == 'login' ) {
+          swal( response.message, '', 'info').then( function() {
+            window.location = '/login'
+          })
+        } else if( response.status == 'success' ) {
+          $( '#cart_counter' ).html( response.cart_counter[ 'cart_count' ])
+          $( '#qty-' + food_id ).html( response.qty )
+        } else {
+          swal( response.message, '', 'error')
+        }
+      },
+    })
+//    alert( 'add_to_cart clicked data-id=' + food_id );
+  })
+
+  $('.item_qty').each( function() {
+    var line_id = $( this ).attr( 'id' )
+    var qty = $( this ).attr( 'data-qty' )
+    $( '#' + line_id ).html( qty )
+  })
+});
