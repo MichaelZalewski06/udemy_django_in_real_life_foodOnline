@@ -2,7 +2,9 @@ from django.db.models import Prefetch
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .context_processors import get_cart_count
+from django.contrib.auth.decorators import login_required
+
+from .context_processors import get_cart_count, get_cart_totals
 from .models import Cart
 from menu.models import Category, FoodItem
 from vendor.models import Vendor
@@ -67,11 +69,11 @@ def add_to_cart( request, food_id=None ):
     'status': 'success',
     'message': f'Food Item {food_id} qty {cart.quantity} added to cart.',
     'cart_counter': get_cart_count( request ),
+    'cart_totals': get_cart_totals( request ),
     'qty': cart.quantity,
   })
 
 def decrease_cart( request, food_id=None ):
-  print( f'add_to_cart food_id={food_id}')
   if not request.user.is_authenticated:
     return JsonResponse({
       'status': 'login',
@@ -105,8 +107,39 @@ def decrease_cart( request, food_id=None ):
     'status': 'success',
     'message': f'Food Item {food_id} qty {cart.quantity} added to cart.',
     'cart_counter': get_cart_count( request ),
+    'cart_totals': get_cart_totals( request ),
     'qty': cart.quantity,
   })
 
+def delete_cart( request, cart_id=None ):
+  if not request.user.is_authenticated:
+    return JsonResponse({
+      'status': 'login',
+      'message': 'You must be logged in',
+    })
+
+  try:
+    cart_item = Cart.objects.get( id=cart_id )
+    print( f'delete_cart cart_id={cart_id}')
+    if cart_item:
+      cart_item.delete()
+      print( f'delete_cart cart_id={cart_id}')
+      return JsonResponse({
+        'status': 'success',
+        'message': f'Item removed from cart.',
+        'cart_counter': get_cart_count( request ),
+        'cart_totals': get_cart_totals( request ),
+      })
+  except:
+    return JsonResponse({
+      'status': 'failed',
+      'message': f'Cart Item {cart_id} does not exist.',
+    })
+
+@login_required( login_url='login' )
 def cart( request ):
-  return render( request, 'marketplace/cart.html' )
+  cart_items = Cart.objects.filter( user=request.user ).order_by( 'created_at' )
+  context = {
+    'cart_items': cart_items
+  }
+  return render( request, 'marketplace/cart.html', context )
