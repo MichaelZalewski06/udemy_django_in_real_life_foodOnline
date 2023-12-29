@@ -1,4 +1,4 @@
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -143,3 +143,29 @@ def cart( request ):
     'cart_items': cart_items
   }
   return render( request, 'marketplace/cart.html', context )
+
+def search( request ):
+  keyword = request.GET[ 'keyword' ]
+  address = request.GET[ 'address' ]
+  lat = request.GET[ 'lat' ]
+  lng = request.GET[ 'lng' ]
+  radius = request.GET[ 'radius' ]
+
+  vendors_have_food = (
+      FoodItem.objects
+        .filter( food_title__icontains=keyword, is_available=True )
+        .values_list( 'vendor', flat=True )
+  )
+  vendors = Vendor.objects.filter(
+      Q( id__in=vendors_have_food ) 
+    | Q( 
+        vendor_name__icontains=keyword, 
+        is_approved=True, user__is_active=True 
+      )
+  )
+  vendor_count = vendors.count()
+  context = {
+    'vendors': vendors,
+    'vendor_count': vendor_count,
+  }
+  return render( request, 'marketplace/listings.html', context )

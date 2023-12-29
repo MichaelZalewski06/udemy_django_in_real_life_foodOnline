@@ -78,7 +78,7 @@ def add_category( request ):
       category_name = form.cleaned_data[ 'category_name' ]
       category = form.save( commit=False )
       category.vendor = get_vendor( request )
-      category.slug = slugify( category_name )
+      category.slug = slugify( category_name ) + '-' + str( category.vendor.id )
       form.save()
       messages.success( request, 'Category added successfully' )
       return redirect( 'menu_builder' )
@@ -99,7 +99,7 @@ def edit_category( request, pk=None ):
       category_name = form.cleaned_data[ 'category_name' ]
       category = form.save( commit=False )
       category.vendor = get_vendor( request )
-      category.slug = slugify( category_name )
+      category.slug = slugify( category_name ) + '-' + str( category.vendor.id )
       form.save()
       messages.success( request, 'Category updated successfully' )
       return redirect( 'menu_builder' )
