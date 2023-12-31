@@ -3,6 +3,9 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.measure import D
 
 from .context_processors import get_cart_count, get_cart_totals
 from .models import Cart
@@ -145,6 +148,10 @@ def cart( request ):
   return render( request, 'marketplace/cart.html', context )
 
 def search( request ):
+  if not 'address' in request.GET:
+    return redirect( 'marketplace' )
+
+  address = request.GET[ 'address' ]
   keyword = request.GET[ 'keyword' ]
   address = request.GET[ 'address' ]
   lat = request.GET[ 'lat' ]
@@ -156,16 +163,28 @@ def search( request ):
         .filter( food_title__icontains=keyword, is_available=True )
         .values_list( 'vendor', flat=True )
   )
-  vendors = Vendor.objects.filter(
-      Q( id__in=vendors_have_food ) 
-    | Q( 
+  q_search_results = (
+      Q( id__in=vendors_have_food) 
+    | Q(
         vendor_name__icontains=keyword, 
         is_approved=True, user__is_active=True 
       )
   )
+  if lat and long and radius:
+    pnt = GEOSGeometry( f'POINT({long} {lat})')
+    q_search_results = q_search_results & Q( user_profile__location__distance_lte=( pnt, D( km=radius )))
+    vendors = (Vendor.objects.filter( q_search_results )
+        .annotate(distance=Distance( "user_profile__location", pnt ))
+        .order_by("distance")
+    )
+    for v in vendors:
+      v.kms = round(v.distance.km, 1)
+  else:
+    vendors = Vendor.objects.filter( q_search_results )
   vendor_count = vendors.count()
   context = {
     'vendors': vendors,
     'vendor_count': vendor_count,
+    'source_location': address,
   }
   return render( request, 'marketplace/listings.html', context )

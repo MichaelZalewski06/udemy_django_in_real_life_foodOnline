@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 from decouple import config
 
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
 
     'accounts',
     'marketplace',
@@ -85,7 +87,8 @@ WSGI_APPLICATION = 'foodOnline_main.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        # 'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': config( 'DB_NAME' ),
         'USER': config( 'DB_USER' ),
         'PASSWORD': config( 'DB_PASSWORD' ),
@@ -157,3 +160,8 @@ EMAIL_USE_TLS = True
 DEFAULT_EMAIL_FROM = 'food Online Marketplace <noreply@test.com>'
 
 GOOGLE_API_KEY = config( 'GOOGLE_API_KEY' )
+
+osgeo_home = 'C:/Users/micha/anaconda3/envs/UdemyDjango/Lib/site-packages/osgeo'
+os.environ['PATH'] = osgeo_home + ';' + os.environ['PATH']
+os.environ['PROJ_LIB'] = osgeo_home + ';' + os.environ['PATH']
+GDAL_LIBRARY_PATH = osgeo_home + '/gdal303.dll'
