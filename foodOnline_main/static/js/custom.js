@@ -31,7 +31,6 @@ function onPlaceChanged () {
   var address = document.getElementById('id_address').value
 
   geocoder.geocode({ 'address': address}, function( results, status ) {
-    console.log('results=>', results)
     // console.log('status=>', status)
     if( status == google.maps.GeocoderStatus.OK ) {
       var latitude = results[ 0 ].geometry.location.lat();
@@ -81,7 +80,6 @@ $( document ).ready( function () {
       type: 'GET',
       url: url,
       success: function( response ) {
-        console.log( response )
         if( response.status == 'login' ) {
           swal( response.message, '', 'info').then( function() {
             window.location = '/login'
@@ -173,4 +171,66 @@ $( document ).ready( function () {
     $( '#tax' ).html( cart_totals[ 'tax' ])
     $( '#total' ).html( cart_totals[ 'grand_total' ])
   }
+
+  $( '.add-hour' ).on( 'click', function( e ) {
+    e.preventDefault();
+    console.log( 'add-hour' );
+    var day = document.getElementById( 'id_day' ).value
+    var from_hour = document.getElementById( 'id_from_hour' ).value
+    var to_hour = document.getElementById( 'id_to_hour' ).value
+    var is_closed = document.getElementById( 'id_is_closed' ).checked
+    var url = document.getElementById( 'add_hour_url' ).value
+    var csrf_token = $( 'input[name=csrfmiddlewaretoken]' ).val()
+    if( day != '' 
+          && ( from_hour != '' && to_hour != '' ) || is_closed ) {
+      $.ajax({
+        type: 'POST',
+        url: url,
+        data: {
+          'day': day,
+          'from_hour': from_hour,
+          'to_hour': to_hour,
+          'is_closed': is_closed,
+          'csrfmiddlewaretoken': csrf_token,
+        },
+        success: function( response ) {
+          if( response.status == 'success' ) {
+            if(response.is_closed == 'Closed') {
+              html = `<td>Closed</td>`
+            } else {
+              html = `<td>${response.from_hour} - ${response.to_hour}</td>`
+            }
+            html = `<tr id="hour-${response.id}">`
+              + `<td><b>${response.day}</b></td>`
+              + html
+              + `<td><a href="#" class="remove_hour" data-url="/vendor/opening-hours/remove/${response.id}/">Remove</a></td>`
+              + '</tr>'
+
+            $(".opening_hours").append(html)
+            document.getElementById("opening_hours").reset();
+          } else {
+            swal( response.message, '', "error" )
+          }
+        },
+      })
+    } else {
+      swal( 'Please complete all fields', '', 'info' )
+    }
+  })
+
+  $( document ).on( 'click', '.remove-hour', function( e ) {
+    e.preventDefault();
+    url = $( this ).attr( 'data-url' );
+    console.log( url );
+    $.ajax({
+      type: 'GET',
+      url: url,
+      success: function( response ) {
+        if( response.status == 'success' ) {
+          console.log( $( '#hour-' + response.id ).html() )
+          $( '#hour-' + response.id ).remove();
+        }
+      }
+    });
+  });
 });

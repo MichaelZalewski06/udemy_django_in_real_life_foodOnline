@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% include 'includes/alerts.html' %}
+<div class="main-section">
+  {%include 'includes/cover.html' %}
+  <div class="page-section account-header buyer-logged-in">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+          <!-- Load sidebar -->
+          {% include 'includes/v_sidebar.html' with active='opening_hours' %}
+        </div>
+        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+          <div class="user-dashboard loader-holder">
+            <div class="user-holder">
+              <h5>Opening Hours</h5>
+              <hr>
+
+  <table class="table opening_hours" style="width: 500px; border: none !important">
+    <tbody>
+      {% for hour in opening_hours %}
+      <tr id="hour-{{ hour.id }}">
+        <td><b>{{ hour }}</b></td>
+        <td>
+          {% if hour.is_closed %}
+            closed
+          {% else %}
+            {{ hour.from_hour }} - {{ hour.to_hour }}
+          {% endif %}
+        </td>
+        <td><a class="remove-hour" data-url="{% url 'remove_opening_hours' hour.id %}"href="#">Remove</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <form id="opening_hours" method="post" action="#">
+    {% csrf_token %}
+    <dif class="row">
+      <div class="col-md-3">
+        {{ form.day }}
+      </div>
+      <div class="col-md-2">
+        {{ form.from_hour }}
+      </div>
+      <div class="col-md-2">
+        {{ form.to_hour }}
+      </div>
+      <div class="col-md-3">
+        {{ form.is_closed }} Set as closed
+      </div>
+      <div class="col-md-2">
+        <input type="hidden" value="{% url 'add_opening_hours' %}" id="add_hour_url">
+        <button class="btnS btn-success add-hour">Add Hours</button>
+      </div>
+    </dif>
+
+    {% for field in form %}
+      {% if field.errors %}
+        {% for error in field.errors %}
+          <li class="text-danger">{{ error }}</li>
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
+
+    <button type="submit" class="btn btn-info"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Update</button>
+  </form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Main Section End -->
+{% endblock %}
