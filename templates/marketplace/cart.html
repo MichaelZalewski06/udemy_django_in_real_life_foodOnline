@@ -77,13 +77,15 @@
                           <span id="subtotal">{{ subtotal }}</span>
                         </span>
                       </li>
+                      {% for tax in tax_list %}
                       <li style="list-style-type: none;">
-                        Tax:
+                        {{ tax.type }} <small>{{ tax.rate }}%</small>
                         <span class="price float-right">
                           <span class="currency">$</span>
-                          <span id="tax">{{ tax }}</span>
+                          <span id="tax-{{ forloop.counter0 }}">{{ tax.amount }}</span>
                         </span>
                       </li>
+                      {% endfor %}
                       <li style="list-style-type: none; font-weight: 600">
                         TOTAL:
                         <span class="price float-right">

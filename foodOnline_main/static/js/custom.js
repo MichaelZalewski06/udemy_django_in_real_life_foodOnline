@@ -85,6 +85,7 @@ $( document ).ready( function () {
             window.location = '/login'
           })
         } else if( response.status == 'success' ) {
+          console.log( `tax_list=${response.cart_totals.tax_list}`)
           $( '#cart_counter' ).html( response.cart_counter[ 'cart_count' ])
           $( '#qty-' + food_id ).html( response.qty )
           display_cart_totals( response.cart_totals )
@@ -168,7 +169,11 @@ $( document ).ready( function () {
 
   function display_cart_totals( cart_totals ) {
     $( '#subtotal' ).html( cart_totals[ 'subtotal' ])
-    $( '#tax' ).html( cart_totals[ 'tax' ])
+    cart_totals[ 'tax_list' ].forEach( ( tax, i) => {
+      console.log( `#tax-${i} = ${tax[ 'amount' ]}`)
+      $( '#tax-' + i ).html( tax[ 'amount' ] )
+    })
+    $( '#tax' ).html( cart_totals[ 'tax_list' ])
     $( '#total' ).html( cart_totals[ 'grand_total' ])
   }
 
