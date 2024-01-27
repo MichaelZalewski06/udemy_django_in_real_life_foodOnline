@@ -44,3 +44,8 @@ class UserProfileForm( forms.ModelForm ):
     super( UserProfileForm, self ).__init__( *args, **kwargs )
     for fn in ['latitude', 'longitude']:
       self.fields[ fn ].widget.attrs[ 'readonly' ] = 'readonly'
+
+class UserInfoForm( forms.ModelForm ):
+  class Meta:
+    model = User
+    fields = [ 'first_name', 'last_name', 'phone_number' ]
