@@ -11,7 +11,9 @@ from django.contrib.gis.measure import D
 
 from .context_processors import get_cart_count, get_cart_totals
 from .models import Cart
+from accounts.models import UserProfile
 from menu.models import Category, FoodItem
+from orders.forms import OrderForm
 from vendor.models import OpeningHour, Vendor
 
 # Create your views here.
@@ -199,3 +201,28 @@ def search( request ):
     'source_location': address,
   }
   return render( request, 'marketplace/listings.html', context )
+
+@login_required( login_url='login' )
+def checkout( request ):
+  cart_items = Cart.objects.filter( user=request.user ).order_by( 'created_at' )
+  cart_count = cart_items.count()
+  if cart_count <= 0:
+    return redirect( 'marketplace' )
+  user_profile = UserProfile.objects.get( user=request.user )
+  initial_values = {
+    'first_name': request.user.first_name,
+    'last_name': request.user.last_name,
+    'phone': request.user.phone_number,
+    'email': request.user.email,
+    'address': user_profile.address,
+    'city': user_profile.city,
+    'state': user_profile.state,
+    'country': user_profile.country,
+    'pin_code': user_profile.pin_code,
+  }
+  form = OrderForm( initial=initial_values )
+  context = {
+    'cart_items': cart_items,
+    'form': form,
+  }
+  return render( request, 'marketplace/checkout.html', context )

@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Main Section Start -->
+<div class="main-section pt-5">
+  <div class="page-section">
+    <div class="container">
+      <form action="{% url 'checkout' %}" method="post">
+        <div class="row">
+          <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="tabs-holder horizontal">
+              <ul class="stickynav-tabs nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#home"><i class="fa fa-shopping-cart text-danger"></i>Billing Address</a></li>
+                
+              </ul>
+              <div class="tab-content">
+                <div id="home" class="tab-pane in active">
+                  <div class="menu-itam-holder">
+                    <div id="menu-item-list-6272" class="menu-itam-list">
+
+{% csrf_token %}
+<div class="row">
+  <div class="form-group col-lg-6 col-md-6 col-sm-12">
+    First Name: {{ form.first_name }}
+  </div>
+  <div class="form-group col-lg-6 col-md-6 col-sm-12">
+    Last Name: {{ form.last_name }}
+  </div>
+</div>
+<div class="row">
+  <div class="form-group col-lg-6 col-md-6 col-sm-12">
+    Phone Number: {{ form.phone }}
+  </div>
+  <div class="form-group col-lg-6 col-md-6 col-sm-12">
+    Email Address: {{ form.email }}
+  </div>
+</div>
+<div class="row">
+  <div class="form-group col-lg-12 col-md-12 col-sm-12">
+    Address: {{ form.address }}
+  </div>
+</div>
+<div class="row">
+  <div class="form-group col-lg-6 col-md-6 col-sm-12">
+    City: {{ form.city }}
+  </div>
+  <div class="form-group col-lg-6 col-md-6 col-sm-12">
+    State: {{ form.state }}
+  </div>
+</div>
+<div class="row">
+  <div class="form-group col-lg-6 col-md-6 col-sm-12">
+    Country: {{ form.country }}
+  </div>
+  <div class="form-group col-lg-6 col-md-6 col-sm-12">
+    Postal Code: {{ form.pin_code }}
+  </div>
+</div>
+                    
+                    </div>
+
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        
+          <!-- Your Order -->
+          <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="tabs-holder horizontal">
+              <ul class="stickynav-tabs nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#home"><i class="icon- icon-room_service"></i>Your Order</a></li>
+                
+              </ul>
+              <div class="tab-content">
+                <div id="home" class="tab-pane in active">
+                  <div class="menu-itam-holder">
+
+                    <div id="home" class="tab-pane in active">
+                        <div id="menu-item-list-6272" class="menu-itam-list">
+                          <ul>
+                            {% for item in cart_items %}
+                            <li id="cart-{{ item.id }}">
+                              <div class="row">
+                                <div class="col col-2 image-holder"><img src="{{ item.food_item.image.url }}" alt=""></div>
+                                <div class="col-6 text-holder">
+                                  <h6>{{ item.food_item.food_title }}</h6>
+                                  <span>{{ item.food_item.description }}</span>
+                                  <a href="{% url 'vendor_detail' item.food_item.vendor.vendor_slug %}" class="badge badge-warning">{{ item.food_item.vendor.vendor_name }}</a>
+                                </div>
+                                <div class="col-2 text-right">
+                                  <span>{{ item.quantity }} QTY</span>
+                                </div>
+                                <div class="col-2 text-right">
+                                  <span class="price">$ {{ item.food_item.price }}</span>
+                                </div>
+                              </div>
+                            </li>
+                            {% endfor %}
+                          </ul>
+                          
+                        </div>
+      
+                        {% for line in cart_items %}
+                        <span id="qty-{{ line.food_item.id }}" class="item_qty d-none" data-qty="{{ line.quantity }}"></span>
+                        {% endfor %}
+                    </div>
+      
+                    <div>
+                      <ul>
+                        <li style="list-style-type: none;">
+                          Subtotal:
+                          <span class="price float-right">
+                            <span class="currency">$</span>
+                            <span id="subtotal">{{ subtotal }}</span>
+                          </span>
+                        </li>
+                        {% for tax in tax_list %}
+                        <li style="list-style-type: none;">
+                          {{ tax.type }} <small>{{ tax.rate }}%</small>
+                          <span class="price float-right">
+                            <span class="currency">$</span>
+                            <span id="tax-{{ forloop.counter0 }}">{{ tax.amount }}</span>
+                          </span>
+                        </li>
+                        {% endfor %}
+                        <li style="list-style-type: none; font-weight: 600">
+                          TOTAL:
+                          <span class="price float-right">
+                            <span class="currency">$</span>
+                            <span id="total">{{ grand_total }}</span>
+                          </span>
+                        </li>
+                      </ul>
+                    </div>
+                    
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Main Section End -->
+
+{% endblock %}

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'customers',
     'marketplace',
     'menu',
+    'orders',
     'vendor',
 ]
 
@@ -71,6 +72,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'accounts.context_processors.get_user_profile',
                 'accounts.context_processors.get_vendor',
                 'accounts.context_processors.get_google_api',
                 'marketplace.context_processors.get_cart_count',
