@@ -11,7 +11,9 @@
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <div class="tabs-holder horizontal">
               <ul class="stickynav-tabs nav nav-tabs">
-                <li class="active"><a data-toggle="tab" href="#home"><i class="fa fa-shopping-cart text-danger"></i>Billing Address</a></li>
+                <li class="active"><a data-toggle="tab" href="#home">
+                  <i class="fa fa-shopping-cart text-danger"></i>Review Your Billing Address</a>
+                </li>
                 
               </ul>
               <div class="tab-content">
@@ -80,32 +82,8 @@
 
                     <div id="home" class="tab-pane in active">
                         <div id="menu-item-list-6272" class="menu-itam-list">
-                          <ul>
-                            {% for item in cart_items %}
-                            <li id="cart-{{ item.id }}">
-                              <div class="row">
-                                <div class="col col-2 image-holder"><img src="{{ item.food_item.image.url }}" alt=""></div>
-                                <div class="col-6 text-holder">
-                                  <h6>{{ item.food_item.food_title }}</h6>
-                                  <span>{{ item.food_item.description }}</span>
-                                  <a href="{% url 'vendor_detail' item.food_item.vendor.vendor_slug %}" class="badge badge-warning">{{ item.food_item.vendor.vendor_name }}</a>
-                                </div>
-                                <div class="col-2 text-right">
-                                  <span>{{ item.quantity }} QTY</span>
-                                </div>
-                                <div class="col-2 text-right">
-                                  <span class="price">$ {{ item.food_item.price }}</span>
-                                </div>
-                              </div>
-                            </li>
-                            {% endfor %}
-                          </ul>
-                          
+
                         </div>
-      
-                        {% for line in cart_items %}
-                        <span id="qty-{{ line.food_item.id }}" class="item_qty d-none" data-qty="{{ line.quantity }}"></span>
-                        {% endfor %}
                     </div>
       
                     <div>
