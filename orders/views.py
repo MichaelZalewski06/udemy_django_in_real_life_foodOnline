@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
 import simplejson as json
@@ -43,7 +44,37 @@ def place_order( request ):
       order.save()
       order.order_number = generate_order_number( order.id )
       order.save()
+      context = {
+        'order': order,
+        'cart_items': cart_items,
+      }
+      return render( request, 'orders/place_order.html', context )
     else:
       print( form.errors )
 
   return( render( request, 'orders/place_order.html' ))
+
+def payments( request ):
+  order_number = request.POST.get( 'order_number' )
+  transaction_id = request.POST.get( 'transaction_id' )
+  payment_method = request.POST.get( 'payment_method' )
+  status = request.POST.get( 'status' )
+
+  order = Order.objects.get( user=request.user, order_number=order_number )
+  payment = Payment(
+   user=request.user,
+   transaction_id = transaction_id,
+   payment_method = payment_method,
+   amount = order.total,
+   status = status,
+  )
+  payment.save()
+
+  order.payment = payment
+  order.is_ordered = True
+  order.save()
+
+  
+
+  return HttpResponse( 'Payments View' )
+

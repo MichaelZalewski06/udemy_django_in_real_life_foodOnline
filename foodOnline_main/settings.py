@@ -72,9 +72,10 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'accounts.context_processors.get_google_api',
+                'accounts.context_processors.get_paypal_client_id',
                 'accounts.context_processors.get_user_profile',
                 'accounts.context_processors.get_vendor',
-                'accounts.context_processors.get_google_api',
                 'marketplace.context_processors.get_cart_count',
                 'marketplace.context_processors.get_cart_totals',
             ],
@@ -162,9 +163,13 @@ EMAIL_HOST_PASSWORD = config( 'EMAIL_HOST_PASSWORD' )
 EMAIL_USE_TLS = True
 DEFAULT_EMAIL_FROM = 'food Online Marketplace <noreply@test.com>'
 
+# Google Places
 GOOGLE_API_KEY = config( 'GOOGLE_API_KEY' )
-
 osgeo_home = 'C:/Users/micha/anaconda3/envs/UdemyDjango/Lib/site-packages/osgeo'
 os.environ['PATH'] = osgeo_home + ';' + os.environ['PATH']
 os.environ['PROJ_LIB'] = osgeo_home + ';' + os.environ['PATH']
 GDAL_LIBRARY_PATH = osgeo_home + '/gdal303.dll'
+
+# PayPal Sandbox
+PAYPAL_CLIENT_ID = config( 'PAYPAL_CLIENT_ID' )
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
