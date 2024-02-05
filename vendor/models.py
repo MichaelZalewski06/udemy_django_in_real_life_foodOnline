@@ -34,7 +34,6 @@ class Vendor( models.Model ):
       if hour.is_closed:
         is_open = False
         break
-      print( f'from_hour={hour.from_hour} to_hour={hour.to_hour}')
       open = str( datetime.strptime( hour.from_hour, "%I:%M %p" ).time() )
       close = str( datetime.strptime( hour.to_hour, "%I:%M %p" ).time() )
       if now_time >= open and now_time <= close:
@@ -42,7 +41,6 @@ class Vendor( models.Model ):
         break
       else:
         is_open = False
-    print( f'is_open() returning {is_open}')
     return is_open
 
   def save( self, *args, **kwargs ):
@@ -57,7 +55,8 @@ class Vendor( models.Model ):
 
         context = {
           'user': self.user,
-          'is_approved': self.is_approved
+          'is_approved': self.is_approved,
+          'to_email': self.user.email,
         }
         send_notification( mail_subject, mail_template, context )
     

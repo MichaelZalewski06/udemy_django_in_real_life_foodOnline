@@ -44,5 +44,10 @@ def send_verification_email( request, user, email_subject, email_template ):
 def send_notification( email_subject, email_template, context ):
   from_email = settings.DEFAULT_FROM_EMAIL
   message = render_to_string( email_template, context )
-  to_email = context[ 'user' ].email
+  to_email_param = context[ 'to_email' ]
+  if( isinstance( to_email_param, str)):
+      to_email = [ to_email_param ]
+  else:
+      to_email = to_email_param
   send_email( EmailMessage( email_subject, message, from_email, to=[to_email] ))
+

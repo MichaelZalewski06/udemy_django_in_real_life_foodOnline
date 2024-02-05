@@ -136,7 +136,7 @@ var grand_total = "{{ grand_total }}"
 var url = "{% url 'payments' %}"
 var order_number = "{{ order.order_number }}"
 const csrftoken = getCookie( 'csrftoken' );
-// var order_complete = "{ % url 'order_complete' % }"
+var order_complete = "{% url 'order_complete' %}"
 
 // Render the PayPal button into #paypal-button-container
 paypal.Buttons({
@@ -186,7 +186,7 @@ function sendTransaction( transaction_id, payment_method, status ) {
     },
     success: function( response ) {
       console.log('response==>', response)
-      // window.location.href = order_complete +'?order_no='+response.order_number+'&trans_id='+response.transaction_id
+      window.location.href = order_complete +'?order_no='+response.order_number+'&trans_id='+response.transaction_id
     }
   })
 }
