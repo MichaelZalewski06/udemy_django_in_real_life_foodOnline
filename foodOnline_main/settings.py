@@ -173,3 +173,7 @@ GDAL_LIBRARY_PATH = osgeo_home + '/gdal303.dll'
 # PayPal Sandbox
 PAYPAL_CLIENT_ID = config( 'PAYPAL_CLIENT_ID' )
 SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
+
+# RazorPay
+RZP_KEY_ID = config( 'RZP_KEY_ID' )
+RZP_KEY_SECRET=config( 'RZP_KEY_SECRET' )

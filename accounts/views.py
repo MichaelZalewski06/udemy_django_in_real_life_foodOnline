@@ -11,8 +11,10 @@ from django.contrib.auth.tokens import default_token_generator
 from .forms import UserForm
 from .models import User, UserProfile
 from .utils import detect_user, send_verification_email
-from vendor.models import Vendor
 
+from orders.models import Order
+
+from vendor.models import Vendor
 from vendor.forms import VendorForm
 
 def check_role_vendor( user ):
@@ -158,7 +160,14 @@ def my_account( request ):
 @login_required( login_url='login' )
 @user_passes_test( check_role_customer )
 def cust_dashboard( request ):
-  return render( request, 'accounts/custDashboard.html' )
+  orders = Order.objects.filter( user=request.user, is_ordered=True )
+  recent_orders = orders[ :5 ]
+  context = {
+    'orders': orders,
+    'orders_count': orders.count(),
+    'recent_orders': recent_orders,
+  }
+  return render( request, 'accounts/custDashboard.html', context )
 
 @login_required( login_url='login' )
 @user_passes_test( check_role_vendor )

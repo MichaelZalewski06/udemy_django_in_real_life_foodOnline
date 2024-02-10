@@ -3,10 +3,12 @@ from django.shortcuts import redirect, render
 
 from django.contrib.auth.decorators import login_required
 
+import razorpay
 import simplejson as json
 
 from accounts.utils import send_notification
 
+from foodOnline_main.settings import RZP_KEY_ID, RZP_KEY_SECRET
 from marketplace.context_processors import get_cart_totals
 from marketplace.models import Cart
 
@@ -156,3 +158,4 @@ def order_complete( request ):
   except:
     return redirect( 'home' )
   return render( request, 'orders/order_complete.html', context )
+
