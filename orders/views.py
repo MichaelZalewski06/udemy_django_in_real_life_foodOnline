@@ -10,7 +10,8 @@ from accounts.utils import send_notification
 
 from foodOnline_main.settings import RZP_KEY_ID, RZP_KEY_SECRET
 from marketplace.context_processors import get_cart_totals
-from marketplace.models import Cart
+from marketplace.models import Cart, Tax
+from menu.models import FoodItem
 
 from .forms import OrderForm
 from .models import Order, OrderedFood, Payment
@@ -24,15 +25,33 @@ def place_order( request ):
   if cart_count <= 0:
     return redirect( 'marketplace' )
 
-  vendors_ids = []
   for i in cart_items:
     if i.food_item.vendor.id not in vendors_ids:
       vendors_ids.append(i.food_item.vendor.id)
 
-  subtotal = get_cart_totals( request )[ 'subtotal' ]
-  total_tax = get_cart_totals( request )[ 'tax' ]
-  grand_total = get_cart_totals( request )[ 'grand_total' ]
-  tax_data = get_cart_totals( request )[ 'tax_list' ]
+  get_tax = Tax.objects.get( is_active=True )
+  subtotal = 0
+  total_data = {}
+  k = {}
+  for i in cart_items:
+    foodItem = FoodItem.objects.get( pk=i.fooditem.id, vendor_id__in=vendor_ids )
+    v_id = fooditem.vendor.id
+    subtotal = k.get( v_id, 0 ) + fooditem.price * i.quantity
+    k[ v_id ] = subtotal
+
+    #Calculate the tax data
+    tax_dict = {}
+    for i in get_tax:
+      tax_type = i.tax_type
+      tax_percentage = i.tax_percentage
+      tax_amount = round( tax_percentage * subtotal / 100, 2 )
+      tax_dict.update( {tax_type: { str( tax_percentage ) : str( tax_amount )} } )
+    total_data.update( {fooditem.vendor.id: {str( subtotal ): str( tax_dict )}})
+
+  subtotal = get_cart_amounts( request )[ 'subtotal' ]
+  total_tax = get_cart_amounts( request )[ 'tax' ]
+  grand_total = get_cart_amounts( request )[ 'grand_total' ]
+  tax_data = get_cart_amounts( request )[ 'tax_dict' ]
 
   if request.method == 'POST':
     form = OrderForm( request.POST )
@@ -50,18 +69,18 @@ def place_order( request ):
       order.user = request.user
 
       order.total = grand_total
-      order.tax_data = json.dumps(tax_data)
+      order.tax_data = json.dumps( tax_data )
       order.total_tax = total_tax
       order.subtotal = subtotal
       order.payment_method = request.POST[ 'payment_method' ]
       order.save()
       order.order_number = generate_order_number( order.id )
-      order.vendors.add(*vendors_ids)
+      order.vendors.add( *vendors_ids )
 
       order.save()
       context = {
-        'order': order,
         'cart_items': cart_items,
+        'order': order,
       }
       return render( request, 'orders/place_order.html', context )
     else:

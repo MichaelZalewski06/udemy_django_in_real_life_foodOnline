@@ -173,7 +173,11 @@ def cust_dashboard( request ):
 @user_passes_test( check_role_vendor )
 def vend_dashboard( request ):
   vendor = Vendor.objects.get( user=request.user )
+  orders = Order.objects.filter( vendors__in=[vendor.id], is_ordered=True ).order_by( '-created_at' )
   context = {
+    'orders': orders,
+    'order_count': orders.count(),
+    'recent_orders': orders[:5],
     'vendor': vendor,
   }
   return render( request, 'accounts/vendDashboard.html', context )
