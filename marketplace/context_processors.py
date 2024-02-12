@@ -36,7 +36,6 @@ def get_cart_totals( request ):
     }) )
 
   grand_total = subtotal + tax_total
-  print( tax_list )
 
   return dict(
     subtotal=subtotal,

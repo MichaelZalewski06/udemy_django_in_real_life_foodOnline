@@ -25,33 +25,34 @@ def place_order( request ):
   if cart_count <= 0:
     return redirect( 'marketplace' )
 
+  vendors_ids = []
   for i in cart_items:
     if i.food_item.vendor.id not in vendors_ids:
       vendors_ids.append(i.food_item.vendor.id)
 
-  get_tax = Tax.objects.get( is_active=True )
+  get_tax = Tax.objects.filter( is_active=True )
   subtotal = 0
   total_data = {}
   k = {}
   for i in cart_items:
-    foodItem = FoodItem.objects.get( pk=i.fooditem.id, vendor_id__in=vendor_ids )
-    v_id = fooditem.vendor.id
-    subtotal = k.get( v_id, 0 ) + fooditem.price * i.quantity
+    foodItem = FoodItem.objects.get( pk=i.food_item.id, vendor_id__in=vendors_ids )
+    v_id = foodItem.vendor.id
+    subtotal = k.get( v_id, 0 ) + foodItem.price * i.quantity
     k[ v_id ] = subtotal
 
     #Calculate the tax data
     tax_dict = {}
     for i in get_tax:
       tax_type = i.tax_type
-      tax_percentage = i.tax_percentage
+      tax_percentage = i.tax_rate
       tax_amount = round( tax_percentage * subtotal / 100, 2 )
       tax_dict.update( {tax_type: { str( tax_percentage ) : str( tax_amount )} } )
-    total_data.update( {fooditem.vendor.id: {str( subtotal ): str( tax_dict )}})
+    total_data.update( {foodItem.vendor.id: {str( subtotal ): str( tax_dict )}})
 
-  subtotal = get_cart_amounts( request )[ 'subtotal' ]
-  total_tax = get_cart_amounts( request )[ 'tax' ]
-  grand_total = get_cart_amounts( request )[ 'grand_total' ]
-  tax_data = get_cart_amounts( request )[ 'tax_dict' ]
+  subtotal = get_cart_totals( request )[ 'subtotal' ]
+  total_tax = get_cart_totals( request )[ 'tax' ]
+  grand_total = get_cart_totals( request )[ 'grand_total' ]
+  tax_data = get_cart_totals( request )[ 'tax_list' ]
 
   if request.method == 'POST':
     form = OrderForm( request.POST )
@@ -70,6 +71,7 @@ def place_order( request ):
 
       order.total = grand_total
       order.tax_data = json.dumps( tax_data )
+      order.total_data = json.dumps( total_data )
       order.total_tax = total_tax
       order.subtotal = subtotal
       order.payment_method = request.POST[ 'payment_method' ]

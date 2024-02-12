@@ -1,5 +1,7 @@
 from django.db import models
 
+import json
+
 from accounts.models import User
 from menu.models import FoodItem
 from vendor.models import Vendor
@@ -70,7 +72,6 @@ class Order( models.Model ):
     if self.total_data:
       total_data = json.loads( self.total_data )
       data = total_data.get( str( vendor.id ))
-      
       for key, val in data.items():
         subtotal += float( key )
         val = val.replace( "'", '"' )

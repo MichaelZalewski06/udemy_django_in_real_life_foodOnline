@@ -6,6 +6,7 @@
       <li{% if active == 'menu_builder' %} class="active"{% endif %}><a href="{% url 'menu_builder' %}"><i class="icon-menu5"></i>Menu Builder</a></li>
       <li{% if active == 'opening_hours' %} class="active"{% endif %}><a href="{% url 'opening_hours' %}"><i class="icon-menu5"></i>Opening Hours</a></li>
       <li{% if active == 'orders' %} class="active"{% endif %}><a href="{% url 'vendor_my_orders' %}"><i class="icon-add_shopping_cart"></i>Orders</a></li>
+      <li><a href="{% url 'logout' %}"><i class="icon-log-out"></i>Logout</a></li>
     </ul>
   </div>
 </div>

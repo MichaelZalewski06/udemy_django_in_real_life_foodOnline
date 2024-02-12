@@ -8,6 +8,8 @@ from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.tokens import default_token_generator
 
+import datetime
+
 from .forms import UserForm
 from .models import User, UserProfile
 from .utils import detect_user, send_verification_email
@@ -174,10 +176,23 @@ def cust_dashboard( request ):
 def vend_dashboard( request ):
   vendor = Vendor.objects.get( user=request.user )
   orders = Order.objects.filter( vendors__in=[vendor.id], is_ordered=True ).order_by( '-created_at' )
+
+  current_month = datetime.datetime.now().month
+  current_month_orders = orders.filter( created_at__month=current_month )
+  current_month_revenue = 0
+  for i in current_month_orders:
+    current_month_revenue += i.get_total_by_vendor()[ 'grand_total' ]
+
+  total_revenue = 0
+  for i in orders:
+    total_revenue += i.get_total_by_vendor()[ 'grand_total' ]
+
   context = {
+    'current_month_revenue': current_month_revenue,
     'orders': orders,
     'order_count': orders.count(),
     'recent_orders': orders[:5],
+    'total_revenue': total_revenue,
     'vendor': vendor,
   }
   return render( request, 'accounts/vendDashboard.html', context )
